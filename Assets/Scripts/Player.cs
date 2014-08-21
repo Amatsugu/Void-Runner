@@ -6,35 +6,80 @@ public class Player : MonoBehaviour {
 	public float speed = 1;
 	public float accel = 100;
 	public float jumpSpeed = 250;
-	public float maxJumps = 2;
+	public int maxJumps = 2;
+	public float particleSpawnRate = .5f;
+	public GameObject particle;
 
-	private Vector2 thisTransform;
-	
+	private float _distance;
+	private Transform _thisTransform;
+	private Rigidbody2D _thisRigidbody;
+	private int _curJumps;
+	private float _nextParticleSpawn;
+	private ObjectPoolerWorld _greenParticlePool;
+
+	void Start()
+	{
+		_thisRigidbody = rigidbody2D;
+		_thisTransform = transform;
+		_greenParticlePool = GameObject.Find("_GreenParticles").GetComponent<ObjectPoolerWorld>();
+	}
 	// Update is called once per frame
 	void Update () 
 	{
-		thisTransform = new Vector2(transform.position.x, transform.position.y);
-		if(rigidbody2D.velocity.x > speed)
+		//_thisTransform = new Vector2(_thisTransform.position.x, _thisTransform.position.y);
+		if(_thisRigidbody.velocity.x > speed)
 		{
-			rigidbody2D.velocity = new Vector2(speed, rigidbody2D.velocity.y);
+			_thisRigidbody.velocity = new Vector2(speed, _thisRigidbody.velocity.y);
 		}else
-			rigidbody2D.AddForce(new Vector2(accel,0));
+			_thisRigidbody.AddForce(new Vector2(accel,0));
 
-		Debug.DrawLine(transform.position, new Ray(transform.position, transform.up*-1).GetPoint(1f), Color.red);
-		RaycastHit2D ray = Physics2D.Raycast(thisTransform, new Vector2(0,-1), 1f);
-		//Debug.Log(ray.collider);
-		if(ray.collider != collider)
+		if(_curJumps < maxJumps)
 		{
 			if(Input.GetKeyDown(KeyCode.Space))
 			{
-				rigidbody2D.AddForce(new Vector2(0,jumpSpeed));
+				_thisRigidbody.AddForce(new Vector2(0,jumpSpeed));
+				_curJumps++;
 			}
 		}
+		//speed += Time.deltaTime;
 
+	}
+
+	public void Loop()
+	{
+		_distance += _thisTransform.position.x;
+		_thisRigidbody.position = new Vector3(0, _thisTransform.position.y);
+	}
+
+	void OnCollisionEnter2D(Collision2D col)
+	{
+		if(col.collider.tag == "Ground")
+		{
+			if(Mathf.RoundToInt(rigidbody2D.velocity.y) == 0)
+				_curJumps = 0;
+			if(_nextParticleSpawn < Time.time)
+			{
+				foreach(ContactPoint2D p in col.contacts)
+				{
+					Instantiate(particle, new Vector3(p.point.x, p.point.y), Quaternion.identity);
+				}
+				_nextParticleSpawn = Time.time + particleSpawnRate;
+			}
+		}
 	}
 
 	void OnCollisionStay2D(Collision2D col)
 	{
-
+		if(col.collider.tag == "Ground")
+		{
+			if(_nextParticleSpawn < Time.time)
+			{
+				foreach(ContactPoint2D p in col.contacts)
+				{
+					_greenParticlePool.Instantiate( new Vector3(p.point.x, p.point.y), Quaternion.identity);
+				}
+				_nextParticleSpawn = Time.time + particleSpawnRate;
+			}
+		}
 	}
 }
