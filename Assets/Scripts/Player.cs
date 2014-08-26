@@ -16,6 +16,30 @@ public class Player : MonoBehaviour {
 	private int _curJumps;
 	private float _nextParticleSpawn;
 	private ObjectPoolerWorld _greenParticlePool;
+	private bool _isPaused = false;
+	private float _prePausedTime = 0;
+	private float _prePauseAngVel;
+	private Vector2 _prePauseVel;
+
+	public void Pause()
+	{
+		_isPaused = true;
+		_prePausedTime = Time.time;
+		_prePauseVel = _thisRigidbody.velocity;
+		_prePauseAngVel = _thisRigidbody.angularVelocity;
+		_thisRigidbody.velocity = Vector2.zero;
+		_thisRigidbody.angularVelocity = 0;
+		_thisRigidbody.isKinematic = true;
+	}
+
+	public void UnPause()
+	{
+		_isPaused = false;
+		_nextParticleSpawn += Time.time - _prePausedTime;
+		_thisRigidbody.isKinematic = false;
+		_thisRigidbody.velocity = _prePauseVel;
+		_thisRigidbody.angularVelocity = _prePauseAngVel;
+	}
 
 	void Start()
 	{
@@ -26,6 +50,8 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		if(_isPaused)
+			return;
 		//_thisTransform = new Vector2(_thisTransform.position.x, _thisTransform.position.y);
 		if(_thisRigidbody.velocity.x > speed)
 		{
@@ -53,6 +79,8 @@ public class Player : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D col)
 	{
+		if(_isPaused)
+			return;
 		if(col.collider.tag == "Ground")
 		{
 			if(Mathf.RoundToInt(rigidbody2D.velocity.y) == 0)
@@ -70,6 +98,8 @@ public class Player : MonoBehaviour {
 
 	void OnCollisionStay2D(Collision2D col)
 	{
+		if(_isPaused)
+			return;
 		if(col.collider.tag == "Ground")
 		{
 			if(_nextParticleSpawn < Time.time)

@@ -23,6 +23,20 @@ public class LevelGenerator : MonoBehaviour {
 	private List<GameObject> _spawnedGround = new List<GameObject>();
 	private Player _player;
 	private Transform _thisTransform;
+	private bool _isPaused;
+	private float _prePausedTime;
+
+	public void Pause()
+	{
+		_isPaused = true;
+		_prePausedTime = Time.time;
+	}
+
+	public void UnPause()
+	{
+		_isPaused = false;
+		_nextCloudSpawn += Time.time - _prePausedTime;
+	}
 
 	void Start () 
 	{
@@ -36,6 +50,8 @@ public class LevelGenerator : MonoBehaviour {
 
 	void Update()
 	{
+		if(_isPaused)
+			return;
 		//Loop();
 		if(reGen)
 		{

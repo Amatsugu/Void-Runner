@@ -7,6 +7,8 @@ public class Particle : MonoBehaviour {
 	public Vector2 initialVelMin;
 	public Vector2 initialVelMax;
 
+	private bool _isPaused;
+	private float _prePausedTime;
 	private float _killAt;
 	// Use this for initialization
 	void Start () 
@@ -26,9 +28,23 @@ public class Particle : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		if(_isPaused)
+			return;
 		if(Time.time >= _killAt)
 		{
 			gameObject.SetActive(false);
 		}
+	}
+
+	public void Pause()
+	{
+		_isPaused = true;
+		_prePausedTime = Time.time;
+	}
+
+	public void UnPause()
+	{
+		_isPaused = false;
+		_killAt += Time.time - _prePausedTime;
 	}
 }
