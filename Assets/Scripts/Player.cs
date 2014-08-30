@@ -9,6 +9,7 @@ public class Player : MonoBehaviour {
 	public int maxJumps = 2;
 	public float particleSpawnRate = .5f;
 	public GameObject particle;
+	public float burstParticeCount = 50;
 
 	private float _distance;
 	private Transform _thisTransform;
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour {
 	private int _curJumps;
 	private float _nextParticleSpawn;
 	private ObjectPoolerWorld _greenParticlePool;
+	private ObjectPoolerWorld _whiteParticlePool;
 	private bool _isPaused = false;
 	private float _prePausedTime = 0;
 	private float _prePauseAngVel;
@@ -46,6 +48,7 @@ public class Player : MonoBehaviour {
 		_thisRigidbody = rigidbody2D;
 		_thisTransform = transform;
 		_greenParticlePool = GameObject.Find("_GreenParticles").GetComponent<ObjectPoolerWorld>();
+		_whiteParticlePool = GameObject.Find("_WhiteParticles").GetComponent<ObjectPoolerWorld>();
 	}
 	// Update is called once per frame
 	void Update () 
@@ -53,21 +56,25 @@ public class Player : MonoBehaviour {
 		if(_isPaused)
 			return;
 		//_thisTransform = new Vector2(_thisTransform.position.x, _thisTransform.position.y);
-		if(_thisRigidbody.velocity.x > speed)
-		{
-			_thisRigidbody.velocity = new Vector2(speed, _thisRigidbody.velocity.y);
-		}else
-			_thisRigidbody.AddForce(new Vector2(accel,0));
+		_thisRigidbody.velocity = new Vector2(speed, _thisRigidbody.velocity.y);
+
 
 		if(_curJumps < maxJumps)
 		{
 			if(Input.GetKeyDown(KeyCode.Space))
 			{
-				_thisRigidbody.AddForce(new Vector2(0,jumpSpeed));
+				_thisRigidbody.velocity = new Vector2(_thisRigidbody.velocity.x, jumpSpeed);
+				if(_curJumps > 0)
+				{
+					for(int i = 0; i < burstParticeCount; i++)
+					{
+						_whiteParticlePool.Instantiate(new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f), Quaternion.identity);
+					}
+				}
 				_curJumps++;
 			}
 		}
-		//speed += Time.deltaTime;
+		speed += accel * Time.deltaTime;
 
 	}
 
@@ -75,6 +82,16 @@ public class Player : MonoBehaviour {
 	{
 		_distance += _thisTransform.position.x;
 		_thisRigidbody.position = new Vector3(0, _thisTransform.position.y);
+	}
+
+	void OnTiggerEnter2D(Collider2D col)
+	{
+
+	}
+
+	void OnTiggerStay2D(Collider2D col)
+	{
+		
 	}
 
 	void OnCollisionEnter2D(Collision2D col)
@@ -85,15 +102,13 @@ public class Player : MonoBehaviour {
 		{
 			if(Mathf.RoundToInt(rigidbody2D.velocity.y) == 0)
 				_curJumps = 0;
-			if(_nextParticleSpawn < Time.time)
+			for(int i = 0; i < burstParticeCount; i++)
 			{
-				foreach(ContactPoint2D p in col.contacts)
-				{
-					Instantiate(particle, new Vector3(p.point.x, p.point.y), Quaternion.identity);
-				}
-				_nextParticleSpawn = Time.time + particleSpawnRate;
+				GameObject particle = _greenParticlePool.Instantiate(new Vector3(_thisTransform.position.x, _thisTransform.position.y), Quaternion.identity);
+				particle.GetComponent<Particle>().SetVel(new Vector2(0, 50), new Vector2(150, 150));
 			}
 		}
+		Debug.Log("Impact");
 	}
 
 	void OnCollisionStay2D(Collision2D col)

@@ -6,6 +6,7 @@ public class Particle : MonoBehaviour {
 	public float lifeTime = 3;
 	public Vector2 initialVelMin;
 	public Vector2 initialVelMax;
+	public bool screenOcclude = true;
 
 	private bool _isPaused;
 	private float _prePausedTime;
@@ -34,6 +35,22 @@ public class Particle : MonoBehaviour {
 		{
 			gameObject.SetActive(false);
 		}
+		if(screenOcclude)
+		{
+			Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+			if(screenPos.x < 0 || screenPos.y < 0)
+				gameObject.SetActive(false);
+			if(screenPos.x > Screen.width || screenPos.y > Screen.height)
+				gameObject.SetActive(false);
+		}
+
+	}
+
+	public void SetVel(Vector2 min, Vector2 max)
+	{
+		initialVelMin = min;
+		initialVelMax = max;
+		Start();
 	}
 
 	public void Pause()

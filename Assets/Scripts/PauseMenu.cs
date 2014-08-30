@@ -3,10 +3,14 @@ using System.Collections;
 
 public class PauseMenu : MonoBehaviour {
 
+	public GameObject pauseMenu;
+
 	private bool _isPaused;
+
 	// Use this for initialization
-	void Start () {
-	
+	void Start () 
+	{
+		pauseMenu.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -14,7 +18,7 @@ public class PauseMenu : MonoBehaviour {
 	{
 		if(Input.GetKeyUp(KeyCode.Escape))
 		{
-
+			PauseControl();
 		}
 	}
 
@@ -31,5 +35,7 @@ public class PauseMenu : MonoBehaviour {
 			else
 				g.SendMessage("UnPause", SendMessageOptions.DontRequireReceiver);
 		}
+		pauseMenu.SetActive(!_isPaused);
+
 	}
 }
