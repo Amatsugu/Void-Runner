@@ -12,18 +12,25 @@ public class Particle : MonoBehaviour {
 	private float _prePausedTime;
 	private float _killAt;
 	// Use this for initialization
-	void Start () 
+	void InitMovement () 
 	{
-		rigidbody2D.velocity = Vector2.zero;
-		rigidbody2D.angularVelocity = 0;
+
 		Vector2 vel = new Vector2(Random.Range(initialVelMin.x, initialVelMax.x), Random.Range(initialVelMin.y, initialVelMax.y));
-		rigidbody2D.AddForce(vel);
+		rigidbody2D.AddForce(vel, ForceMode2D.Impulse);
 		_killAt = Time.time + lifeTime;
 	}
 
 	void OnEnable()
 	{
-		Start();
+		//Debug.Log("Enabled");
+		rigidbody2D.isKinematic = false;
+	}
+
+	void OnDisable()
+	{
+		rigidbody2D.velocity = Vector2.zero;
+		rigidbody2D.angularVelocity = 0;
+		rigidbody2D.isKinematic = true;
 	}
 	
 	// Update is called once per frame
@@ -50,7 +57,8 @@ public class Particle : MonoBehaviour {
 	{
 		initialVelMin = min;
 		initialVelMax = max;
-		Start();
+		rigidbody2D.isKinematic = false;
+		InitMovement();
 	}
 
 	public void Pause()
