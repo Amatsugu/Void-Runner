@@ -99,7 +99,7 @@ public class Player : MonoBehaviour {
 		Vector3 scale = healthBar.localScale;
 		healthBar.localScale = new Vector3(Mathf.Lerp(scale.x, Screen.width * (_curHealth/100), Time.deltaTime*5f), scale.y, scale.z);
 		_curSpeed += accel * Time.deltaTime;
-		Debug.Log(_thisRigidbody.velocity);
+		//Debug.Log(_thisRigidbody.velocity);
 	}
 
 	public void Loop()
