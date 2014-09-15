@@ -8,6 +8,7 @@ public class PauseMenu : MonoBehaviour {
 
 	private bool _isPaused;
 	private bool _isOptions;
+	private bool _VSync;
 	private CanvasRenderer _cr;
 	private float _musicVol;
 	private float _effectVol;
@@ -17,6 +18,7 @@ public class PauseMenu : MonoBehaviour {
 	{
 		_cr = pauseMenu.GetComponent<CanvasRenderer>();
 		pauseMenu.SetActive(false);
+		optionsMenu.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -33,27 +35,40 @@ public class PauseMenu : MonoBehaviour {
 		if(_isOptions)
 		{
 			_isOptions = false;
+			optionsMenu.SetActive(_isOptions);
 			return;
-		}
-		_isPaused = !_isPaused;
-		GameObject[] objects = GameObject.FindObjectsOfType<GameObject>();
-		foreach(GameObject g in objects)
+		}else
 		{
-			if(g == gameObject)
-				continue;
-			if(!_isPaused)
-				g.SendMessage("Pause", SendMessageOptions.DontRequireReceiver);
-			else
-				g.SendMessage("UnPause", SendMessageOptions.DontRequireReceiver);
+			_isPaused = !_isPaused;
+			GameObject[] objects = GameObject.FindObjectsOfType<GameObject>();
+			foreach(GameObject g in objects)
+			{
+				if(g == gameObject)
+					continue;
+				if(_isPaused)
+					g.SendMessage("Pause", SendMessageOptions.DontRequireReceiver);
+				else
+					g.SendMessage("UnPause", SendMessageOptions.DontRequireReceiver);
+			}
+			pauseMenu.SetActive(_isPaused);
+			optionsMenu.SetActive(false);
 		}
-		pauseMenu.SetActive(!_isPaused);
-		optionsMenu.SetActive(false);
 	}
 
 	public void ToggleOptions()
 	{
-		_isOptions = _isOptions;
-		optionsMenu.SetActive(!_isOptions);
+		_isOptions = !_isOptions;
+		optionsMenu.SetActive(_isOptions);
+	}
+
+	public void OptionsCancel()
+	{
+		ToggleOptions();
+	}
+
+	public void OptionsApply()
+	{
+		ToggleOptions();
 	}
 
 	public void Quit()
@@ -69,5 +84,10 @@ public class PauseMenu : MonoBehaviour {
 	public void SetMusicVol(float vol)
 	{
 		_musicVol = vol;
+	}
+
+	public void SetVSync(bool sync)
+	{
+		_VSync = sync;
 	}
 }
