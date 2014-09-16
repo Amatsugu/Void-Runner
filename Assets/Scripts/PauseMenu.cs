@@ -1,24 +1,47 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PauseMenu : MonoBehaviour {
 
 	public GameObject pauseMenu;
 	public GameObject optionsMenu;
+	public Text _musicVolNum;
+	public Text _effectVolNum;
+	public Text _masterVolNum;
 
 	private bool _isPaused;
 	private bool _isOptions;
 	private bool _VSync;
-	private CanvasRenderer _cr;
+	private Image _cr;
+	private float _masterVol;
 	private float _musicVol;
 	private float _effectVol;
 
 	// Use this for initialization
 	void Start () 
 	{
-		_cr = pauseMenu.GetComponent<CanvasRenderer>();
+		_cr = pauseMenu.GetComponent<Image>();
+
 		pauseMenu.SetActive(false);
 		optionsMenu.SetActive(false);
+		LoadPrefs();
+	}
+
+	void LoadPrefs()
+	{
+		_masterVol = PlayerPrefs.GetFloat("MasterVol", 100);
+		_masterVolNum.text = _masterVol.ToString();
+		_effectVol = PlayerPrefs.GetFloat("EffectVol", 100);
+		_effectVolNum.text = _effectVol.ToString();
+		_musicVol = PlayerPrefs.GetFloat("MusicVol", 100);
+		_effectVolNum.text = _effectVol.ToString();
+		int syncCount = PlayerPrefs.GetInt("VSync", 1);
+		if(syncCount == 0)
+			_VSync = false;
+		else
+			_VSync = true;
+		ApplyOptions();
 	}
 	
 	// Update is called once per frame
@@ -28,6 +51,11 @@ public class PauseMenu : MonoBehaviour {
 		{
 			PauseControl();
 		}
+	}
+
+	void ApplyOptions()
+	{
+
 	}
 
 	public void PauseControl()
@@ -63,11 +91,14 @@ public class PauseMenu : MonoBehaviour {
 
 	public void OptionsCancel()
 	{
+		LoadPrefs();
+		ApplyOptions();
 		ToggleOptions();
 	}
 
 	public void OptionsApply()
 	{
+		ApplyOptions();
 		ToggleOptions();
 	}
 
@@ -76,14 +107,23 @@ public class PauseMenu : MonoBehaviour {
 
 	}
 
+	public void SetMasterVol(float vol)
+	{
+		AudioListener.volume = 100/_masterVol;
+		_masterVol = vol;
+		_masterVolNum.text = vol.ToString();
+	}
+
 	public void SetEffectVol(float vol)
 	{
 		_effectVol = vol;
+		_effectVolNum.text = vol.ToString();
 	}
 
 	public void SetMusicVol(float vol)
 	{
 		_musicVol = vol;
+		_effectVolNum.text = vol.ToString();
 	}
 
 	public void SetVSync(bool sync)
