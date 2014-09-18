@@ -7,7 +7,6 @@ public class Cloud : MonoBehaviour {
 
 	private GameObject _player;
 	private float _speed;
-	private Transform _thisTransform;
 	private Rigidbody2D _thisRigidbody;
 	private bool _isPaused = false;
 	//private float _prePausedTime = 0;
@@ -38,7 +37,6 @@ public class Cloud : MonoBehaviour {
 	{
 		_player = GameObject.FindWithTag("Player");
 		_speed = Random.Range(0.65f, 0.9f);
-		_thisTransform = transform;
 		_thisRigidbody = rigidbody2D;
 	}
 

@@ -6,14 +6,20 @@ public class PauseMenu : MonoBehaviour {
 
 	public GameObject pauseMenu;
 	public GameObject optionsMenu;
-	public Text _musicVolNum;
-	public Text _effectVolNum;
-	public Text _masterVolNum;
+	public Color dimColor = new Color(0,0,0,.5f);
+	public float dimSpeed = 4;
+	public Text musicVolNum;
+	public Text effectVolNum;
+	public Text masterVolNum;
+	public Slider musicVol;
+	public Slider masterVol;
+	public Slider effectVol;
+	public Toggle VSync;
 
 	private bool _isPaused;
 	private bool _isOptions;
-	private bool _VSync;
 	private Image _cr;
+	private int _VSync;
 	private float _masterVol;
 	private float _musicVol;
 	private float _effectVol;
@@ -30,17 +36,17 @@ public class PauseMenu : MonoBehaviour {
 
 	void LoadPrefs()
 	{
-		_masterVol = PlayerPrefs.GetFloat("MasterVol", 100);
-		_masterVolNum.text = _masterVol.ToString();
-		_effectVol = PlayerPrefs.GetFloat("EffectVol", 100);
-		_effectVolNum.text = _effectVol.ToString();
-		_musicVol = PlayerPrefs.GetFloat("MusicVol", 100);
-		_effectVolNum.text = _effectVol.ToString();
-		int syncCount = PlayerPrefs.GetInt("VSync", 1);
-		if(syncCount == 0)
-			_VSync = false;
+		masterVol.value = _masterVol = PlayerPrefs.GetFloat("MasterVol", 100);
+		masterVolNum.text = _masterVol.ToString();
+		effectVol.value = _effectVol = PlayerPrefs.GetFloat("EffectVol", 100);
+		effectVolNum.text = _effectVol.ToString();
+		musicVol.value = _musicVol = PlayerPrefs.GetFloat("MusicVol", 100);
+		musicVolNum.text = _effectVol.ToString();
+		_VSync = PlayerPrefs.GetInt("VSync", 1);
+		if(_VSync > 0)
+			VSync.isOn = true;
 		else
-			_VSync = true;
+			VSync.isOn = false;
 		ApplyOptions();
 	}
 	
@@ -51,11 +57,29 @@ public class PauseMenu : MonoBehaviour {
 		{
 			PauseControl();
 		}
+		if(_isPaused)
+			_cr.color = Color.Lerp(_cr.color, dimColor, Time.deltaTime * dimSpeed);
+		else
+			_cr.color = Color.clear;
 	}
 
 	void ApplyOptions()
 	{
+		GameRegistry.EFFECT_VOL = _effectVol/100;
+		GameRegistry.MUSIC_VOL = _musicVol/100;
 
+		SoundController[] audio = GameObject.FindObjectsOfType<SoundController>() as SoundController[];
+		foreach(SoundController s in audio)
+		{
+			s.UpdateVolumes();
+		}
+
+		QualitySettings.vSyncCount = _VSync;
+
+		PlayerPrefs.SetFloat("MasterVol", _masterVol);
+		PlayerPrefs.SetFloat("EffectVol", _effectVol);
+		PlayerPrefs.SetFloat("MusicVol", _musicVol);
+		PlayerPrefs.SetInt("VSync", _VSync);
 	}
 
 	public void PauseControl()
@@ -111,23 +135,26 @@ public class PauseMenu : MonoBehaviour {
 	{
 		AudioListener.volume = 100/_masterVol;
 		_masterVol = vol;
-		_masterVolNum.text = vol.ToString();
+		masterVolNum.text = vol.ToString();
 	}
 
 	public void SetEffectVol(float vol)
 	{
 		_effectVol = vol;
-		_effectVolNum.text = vol.ToString();
+		effectVolNum.text = vol.ToString();
 	}
 
 	public void SetMusicVol(float vol)
 	{
 		_musicVol = vol;
-		_effectVolNum.text = vol.ToString();
+		effectVolNum.text = vol.ToString();
 	}
 
 	public void SetVSync(bool sync)
 	{
-		_VSync = sync;
+		if(sync)
+			_VSync = 1;
+		else
+			_VSync = 0;
 	}
 }
