@@ -22,6 +22,7 @@ public class Player : MonoBehaviour {
 	private float _nextParticleSpawn;
 	private ObjectPoolerWorld _greenParticlePool;
 	private ObjectPoolerWorld _whiteParticlePool;
+	private ObjectPoolerWorld _redParticlePool;
 	private bool _isPaused = false;
 	private float _prePausedTime = 0;
 	private float _prePauseAngVel;
@@ -56,6 +57,7 @@ public class Player : MonoBehaviour {
 		_curSpeed = startSpeed;
 		_greenParticlePool = GameObject.Find("_GreenParticles").GetComponent<ObjectPoolerWorld>();
 		_whiteParticlePool = GameObject.Find("_WhiteParticles").GetComponent<ObjectPoolerWorld>();
+		_redParticlePool = GameObject.Find("_RedParticles").GetComponent<ObjectPoolerWorld>();
 	}
 	// Update is called once per frame
 	void Update () 
@@ -114,14 +116,29 @@ public class Player : MonoBehaviour {
 		{
 			_curHealth -= 10;
 		}
+		if(_curHealth < 0)
+			_curHealth = 0;
 	}
 
 	void OnTriggerStay2D(Collider2D col)
 	{
 		if(col.tag == "Spikes")
 		{
-			_curHealth -= 10 * Time.deltaTime;
+			float healthLoss = 10 * Time.deltaTime;
+			_curHealth -= healthLoss;
+			Debug.Log(Mathf.CeilToInt(healthLoss));
+			for(int i = 0; i < Mathf.CeilToInt(healthLoss); i++)
+			{
+				Vector2 min = particleInitialFoces[0];
+				min.x += _thisRigidbody.velocity.x;
+				Vector2 max = particleInitialFoces[1];
+				max.x += _thisRigidbody.velocity.x;
+				GameObject particle = _redParticlePool.Instantiate( new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f), Quaternion.identity);
+				particle.GetComponent<Particle>().SetVel(min, max);
+			}
 		}
+		if(_curHealth < 0)
+			_curHealth = 0;
 	}
 
 	void OnCollisionEnter2D(Collision2D col)
