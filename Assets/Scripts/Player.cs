@@ -13,6 +13,7 @@ public class Player : MonoBehaviour {
 	public float burstParticeCount = 50;
 	public RectTransform healthBar;
 	public Vector2[] particleInitialFoces;
+	public bool useParticles = true;
 
 	private float _distance;
 	private float _curSpeed;
@@ -79,10 +80,13 @@ public class Player : MonoBehaviour {
 					min.x += _thisRigidbody.velocity.x;
 					Vector2 max = particleInitialFoces[5];
 					max.x += _thisRigidbody.velocity.x;
-					for(int i = 0; i < burstParticeCount; i++)
+					if(useParticles)
 					{
-						GameObject particle = _whiteParticlePool.Instantiate(new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f), Quaternion.identity);
-						particle.GetComponent<Particle>().SetVel(min, max);
+						for(int i = 0; i < burstParticeCount; i++)
+						{
+							GameObject particle = _whiteParticlePool.Instantiate(new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f), Quaternion.identity);
+							particle.GetComponent<Particle>().SetVel(min, max);
+						}
 					}
 					if(_willImpact)
 						_willImpact = false;
@@ -112,6 +116,8 @@ public class Player : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
+		if(_isPaused)
+			return;
 		if(col.tag == "Spikes")
 		{
 			_curHealth -= 10;
@@ -122,19 +128,23 @@ public class Player : MonoBehaviour {
 
 	void OnTriggerStay2D(Collider2D col)
 	{
+		if(_isPaused)
+			return;
 		if(col.tag == "Spikes")
 		{
 			float healthLoss = 10 * Time.deltaTime;
 			_curHealth -= healthLoss;
-			Debug.Log(Mathf.CeilToInt(healthLoss));
-			for(int i = 0; i < Mathf.CeilToInt(healthLoss); i++)
+			if(useParticles)
 			{
-				Vector2 min = particleInitialFoces[0];
-				min.x += _thisRigidbody.velocity.x;
-				Vector2 max = particleInitialFoces[1];
-				max.x += _thisRigidbody.velocity.x;
-				GameObject particle = _redParticlePool.Instantiate( new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f), Quaternion.identity);
-				particle.GetComponent<Particle>().SetVel(min, max);
+				for(int i = 0; i < Mathf.CeilToInt(healthLoss); i++)
+				{
+					Vector2 min = particleInitialFoces[0];
+					min.x += _thisRigidbody.velocity.x;
+					Vector2 max = particleInitialFoces[1];
+					max.x += _thisRigidbody.velocity.x;
+					GameObject particle = _redParticlePool.Instantiate( new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f), Quaternion.identity);
+					particle.GetComponent<Particle>().SetVel(min, max);
+				}
 			}
 		}
 		if(_curHealth < 0)
@@ -153,14 +163,17 @@ public class Player : MonoBehaviour {
 			if(!_willImpact)
 				return;
 			_willImpact = false;
-			Vector2 min = particleInitialFoces[0];
-			min.x += _thisRigidbody.velocity.x;
-			Vector2 max = particleInitialFoces[1];
-			max.x += _thisRigidbody.velocity.x;
-			for(int i = 0; i < burstParticeCount; i++)
+			if(useParticles)
 			{
-				GameObject particle = _greenParticlePool.Instantiate(new Vector3(_thisTransform.position.x, _thisTransform.position.y-.5f), Quaternion.identity);
-				particle.GetComponent<Particle>().SetVel(min, max);
+				Vector2 min = particleInitialFoces[0];
+				min.x += _thisRigidbody.velocity.x;
+				Vector2 max = particleInitialFoces[1];
+				max.x += _thisRigidbody.velocity.x;
+				for(int i = 0; i < burstParticeCount; i++)
+				{
+					GameObject particle = _greenParticlePool.Instantiate(new Vector3(_thisTransform.position.x, _thisTransform.position.y-.5f), Quaternion.identity);
+					particle.GetComponent<Particle>().SetVel(min, max);
+				}
 			}
 		}
 		//Debug.Log("Impact");
@@ -169,6 +182,8 @@ public class Player : MonoBehaviour {
 	void OnCollisionStay2D(Collision2D col)
 	{
 		if(_isPaused)
+			return;
+		if(!useParticles)
 			return;
 		if(col.collider.tag == "Ground")
 		{

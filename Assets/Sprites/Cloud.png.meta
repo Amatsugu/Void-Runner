@@ -53,8 +53,8 @@ TextureImporter:
         y: 0
         width: 128
         height: 64
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 6
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: Cloud2
       rect:
@@ -63,8 +63,8 @@ TextureImporter:
         y: 64
         width: 128
         height: 64
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 6
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

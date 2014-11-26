@@ -147,7 +147,7 @@ public class PauseMenu : MonoBehaviour {
 	public void SetMusicVol(float vol)
 	{
 		_musicVol = vol;
-		effectVolNum.text = vol.ToString();
+		musicVolNum.text = vol.ToString();
 	}
 
 	public void SetVSync(bool sync)
