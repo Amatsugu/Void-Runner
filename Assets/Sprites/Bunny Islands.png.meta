@@ -1,0 +1,146 @@
+fileFormatVersion: 2
+guid: 006576aa697e6c1499afec83c999858d
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: Tail
+    21300002: Body
+    21300004: Head
+    21300006: Ear 1
+    21300008: Back Leg 1
+    21300010: Back Leg 2
+    21300012: Front Leg 1
+    21300014: Front Leg 2
+    21300016: Ear 2
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: Tail
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 205
+        width: 45
+        height: 69
+      alignment: 9
+      pivot: {x: .717557549, y: .48423481}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Body
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 132
+        width: 219
+        height: 140
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Head
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 162
+        width: 101
+        height: 77
+      alignment: 9
+      pivot: {x: .35141325, y: .240134105}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Ear 1
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 178
+        width: 81
+        height: 66
+      alignment: 9
+      pivot: {x: .767619193, y: .201358914}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Back Leg 1
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 17
+        width: 102
+        height: 98
+      alignment: 9
+      pivot: {x: .453054994, y: .555841327}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Back Leg 2
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 23
+        width: 96
+        height: 92
+      alignment: 9
+      pivot: {x: .442995399, y: .574353814}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Front Leg 1
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 2
+        width: 83
+        height: 128
+      alignment: 9
+      pivot: {x: .359369487, y: .825678468}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Front Leg 2
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 0
+        width: 79
+        height: 122
+      alignment: 9
+      pivot: {x: .373356313, y: .841695428}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Ear 2
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 66
+        width: 50
+        height: 66
+      alignment: 9
+      pivot: {x: .700096428, y: .146293759}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
