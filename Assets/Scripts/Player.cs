@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
 
+	public Animator anim;
 	public float startSpeed = 1;
 	public float accel = 100;
 	public float jumpSpeed = 250;
@@ -12,8 +13,9 @@ public class Player : MonoBehaviour {
 	public GameObject particle;
 	public float burstParticeCount = 50;
 	public RectTransform healthBar;
-	public Vector2[] particleInitialFoces;
 	public bool useParticles = true;
+	public Color[] particleColors;
+	public Vector2[] particleInitialFoces;
 
 	private float _distance;
 	private float _curSpeed;
@@ -21,15 +23,14 @@ public class Player : MonoBehaviour {
 	private Rigidbody2D _thisRigidbody;
 	private int _curJumps;
 	private float _nextParticleSpawn;
-	private ObjectPoolerWorld _greenParticlePool;
-	private ObjectPoolerWorld _whiteParticlePool;
-	private ObjectPoolerWorld _redParticlePool;
+	private ObjectPoolerWorld _basicParticlePool;
 	private bool _isPaused = false;
 	private float _prePausedTime = 0;
 	private float _prePauseAngVel;
 	private Vector2 _prePauseVel;
 	private float _curHealth = 100;
 	private bool _willImpact = false;
+	private bool _isGrounded = false;
 
 	public void Pause()
 	{
@@ -40,6 +41,7 @@ public class Player : MonoBehaviour {
 		_thisRigidbody.velocity = Vector2.zero;
 		_thisRigidbody.angularVelocity = 0;
 		_thisRigidbody.isKinematic = true;
+		anim.speed = 0;
 	}
 
 	public void UnPause()
@@ -49,6 +51,7 @@ public class Player : MonoBehaviour {
 		_thisRigidbody.isKinematic = false;
 		_thisRigidbody.velocity = _prePauseVel;
 		_thisRigidbody.angularVelocity = _prePauseAngVel;
+		anim.speed = _curSpeed/startSpeed;
 	}
 
 	void Start()
@@ -56,9 +59,7 @@ public class Player : MonoBehaviour {
 		_thisRigidbody = rigidbody2D;
 		_thisTransform = transform;
 		_curSpeed = startSpeed;
-		_greenParticlePool = GameObject.Find("_GreenParticles").GetComponent<ObjectPoolerWorld>();
-		_whiteParticlePool = GameObject.Find("_WhiteParticles").GetComponent<ObjectPoolerWorld>();
-		_redParticlePool = GameObject.Find("_RedParticles").GetComponent<ObjectPoolerWorld>();
+		_basicParticlePool = GameObject.Find("_BasicParticles").GetComponent<ObjectPoolerWorld>();
 	}
 	// Update is called once per frame
 	void Update () 
@@ -76,22 +77,28 @@ public class Player : MonoBehaviour {
 				_thisRigidbody.velocity = new Vector2(_thisRigidbody.velocity.x, jumpSpeed);
 				if(_curJumps > 0)
 				{
+					//TODO Overhaul this, Reduce draw calls
+					//Double Jump Paritcle Vel
 					Vector2 min = particleInitialFoces[4];
 					min.x += _thisRigidbody.velocity.x;
 					Vector2 max = particleInitialFoces[5];
 					max.x += _thisRigidbody.velocity.x;
+					//Create Particles
 					if(useParticles)
 					{
 						for(int i = 0; i < burstParticeCount; i++)
 						{
-							GameObject particle = _whiteParticlePool.Instantiate(new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f), Quaternion.identity);
-							particle.GetComponent<Particle>().SetVel(min, max);
+							Vector3 spawnPos = new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f);
+							GameObject particle = _basicParticlePool.Instantiate(spawnPos, Quaternion.identity);
+							particle.GetComponent<Particle>().Init(particleColors[0], "Player", 1, min, max);
 						}
 					}
 					if(_willImpact)
 						_willImpact = false;
 				}
 				_curJumps++;
+				_isGrounded = false;
+				anim.SetTrigger("Jump");
 			}
 		}
 		if(_curJumps > 0 && !_willImpact)
@@ -106,6 +113,12 @@ public class Player : MonoBehaviour {
 		healthBar.localScale = new Vector3(Mathf.Lerp(scale.x, Screen.width * (_curHealth/100), Time.deltaTime*5f), scale.y, scale.z);
 		_curSpeed += accel * Time.deltaTime;
 		//Debug.Log(_thisRigidbody.velocity);
+		if(anim != null)
+		{
+			anim.SetFloat("VerticalVel", _thisRigidbody.velocity.y);
+			anim.SetBool("isGrounded", _isGrounded);
+			anim.speed = _curSpeed/startSpeed;
+		}
 	}
 
 	public void Loop()
@@ -136,14 +149,17 @@ public class Player : MonoBehaviour {
 			_curHealth -= healthLoss;
 			if(useParticles)
 			{
+				//TODO Particle overhaul
+				//Damage Particles
 				for(int i = 0; i < Mathf.CeilToInt(healthLoss); i++)
 				{
 					Vector2 min = particleInitialFoces[0];
 					min.x += _thisRigidbody.velocity.x;
 					Vector2 max = particleInitialFoces[1];
 					max.x += _thisRigidbody.velocity.x;
-					GameObject particle = _redParticlePool.Instantiate( new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f), Quaternion.identity);
-					particle.GetComponent<Particle>().SetVel(min, max);
+					Vector3 spawnPos = new Vector3(_thisTransform.position.x, _thisTransform.position.y-.4f);
+					GameObject particle = _basicParticlePool.Instantiate( spawnPos, Quaternion.identity);
+					particle.GetComponent<Particle>().Init( particleColors[1], "ForeGround", 0, min, max);
 				}
 			}
 		}
@@ -159,20 +175,26 @@ public class Player : MonoBehaviour {
 		if(col.collider.tag == "Ground")
 		{
 			if(Mathf.RoundToInt(rigidbody2D.velocity.y) == 0)
+			{
 				_curJumps = 0;
+				_isGrounded = true;
+			}
 			if(!_willImpact)
 				return;
 			_willImpact = false;
 			if(useParticles)
 			{
+				//TODO Particle overhaul
+				//Impact Particles
 				Vector2 min = particleInitialFoces[0];
 				min.x += _thisRigidbody.velocity.x;
 				Vector2 max = particleInitialFoces[1];
 				max.x += _thisRigidbody.velocity.x;
 				for(int i = 0; i < burstParticeCount; i++)
 				{
-					GameObject particle = _greenParticlePool.Instantiate(new Vector3(_thisTransform.position.x, _thisTransform.position.y-.5f), Quaternion.identity);
-					particle.GetComponent<Particle>().SetVel(min, max);
+					Vector3 spawnPos = new Vector3(_thisTransform.position.x, _thisTransform.position.y-.5f);
+					GameObject particle = _basicParticlePool.Instantiate( spawnPos, Quaternion.identity);
+					particle.GetComponent<Particle>().Init( particleColors[2], "Player", 1, min, max);
 				}
 			}
 		}
@@ -187,6 +209,8 @@ public class Player : MonoBehaviour {
 			return;
 		if(col.collider.tag == "Ground")
 		{
+			//TODO Paticle Overhaul
+			//Dust trail particles
 			if(_nextParticleSpawn < Time.time)
 			{
 				Vector2 min = particleInitialFoces[2];
@@ -195,8 +219,9 @@ public class Player : MonoBehaviour {
 				max.x += _thisRigidbody.velocity.x;
 				foreach(ContactPoint2D p in col.contacts)
 				{
-					GameObject particle = _greenParticlePool.Instantiate( new Vector3(p.point.x, p.point.y), Quaternion.identity);
-					particle.GetComponent<Particle>().SetVel(min, max);
+					Vector3 spawnPos = new Vector3(p.point.x, p.point.y);
+					GameObject particle = _basicParticlePool.Instantiate( spawnPos, Quaternion.identity);
+					particle.GetComponent<Particle>().Init( particleColors[3], "Player", 1, min, max);
 				}
 				_nextParticleSpawn = Time.time + particleSpawnRate;
 			}

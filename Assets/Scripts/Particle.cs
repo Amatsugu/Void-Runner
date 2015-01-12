@@ -53,6 +53,40 @@ public class Particle : MonoBehaviour {
 
 	}
 
+	public void Init(Color col, int layer, int order)
+	{
+		SpriteRenderer r = GetComponent<SpriteRenderer>();
+		r.color = col;
+		r.sortingLayerID = layer;
+		r.sortingOrder = order;
+	}
+
+	public void Init(Color col, int layer, int order, Vector2 minVel, Vector2 maxVel)
+	{
+		SpriteRenderer r = GetComponent<SpriteRenderer>();
+		r.color = col;
+		r.sortingLayerID = layer;
+		r.sortingOrder = order;
+		SetVel(minVel, maxVel);
+	}
+
+	public void Init(Color col, string layer, int order)
+	{
+		SpriteRenderer r = GetComponent<SpriteRenderer>();
+		r.color = col;
+		r.sortingLayerName = layer;
+		r.sortingOrder = order;
+	}
+	
+	public void Init(Color col, string layer, int order, Vector2 minVel, Vector2 maxVel)
+	{
+		SpriteRenderer r = GetComponent<SpriteRenderer>();
+		r.color = col;
+		r.sortingLayerName = layer;
+		r.sortingOrder = order;
+		SetVel(minVel, maxVel);
+	}
+
 	public void SetVel(Vector2 min, Vector2 max)
 	{
 		initialVelMin = min;
