@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -13,11 +14,13 @@ public class Player : MonoBehaviour {
 	public ParticleSystem impactBurstParticles;
 	public ParticleSystem damgeParicles;
 	public ParticleSystem groundParticles;
-	public ParticleSystem doubleJump;
+	public ParticleSystem jumpParticles;
+	public Text distanceDisplay;
 
 	private float _distance;
 	private float _curSpeed;
 	private Rigidbody2D _thisRigidbody;
+	private Transform _thisTransform;
 	private int _curJumps;
 	private bool _isPaused = false;
 	private float _prePauseAngVel;
@@ -25,13 +28,16 @@ public class Player : MonoBehaviour {
 	private float _curHealth = 100;
 	private bool _willImpact = false;
 	private bool _isGrounded = false;
+	public ParticleSystem.Particle[] _particleBuffer;
 
 
 	//Initializations
 	void Start()
 	{
 		_thisRigidbody = GetComponent<Rigidbody2D>();
+		_thisTransform = transform;
 		_curSpeed = startSpeed;
+		_particleBuffer = new ParticleSystem.Particle[groundParticles.maxParticles];
 	}
 
 	//When the game pauses
@@ -74,6 +80,7 @@ public class Player : MonoBehaviour {
 		UpdateHUD();
 		UpdateAnimations();
 		_curSpeed += accel * Time.deltaTime;
+		distanceDisplay.text = VoidUtils.Round(_thisTransform.position.x + _distance, 100) + "m";
 	}
 
 	//Process animations
@@ -147,7 +154,7 @@ public class Player : MonoBehaviour {
 			anim.SetTrigger("Jump");
 			//anim.StopPlayback();
 			anim.Play("Jump");
-			doubleJump.Play();
+			jumpParticles.Play();
 		}
 	}
 
@@ -218,6 +225,43 @@ public class Player : MonoBehaviour {
 		{
 			//Disable ground particles
 			groundParticles.Stop();
+		}
+	}
+
+
+	public void Loop()
+	{
+		Vector3 pos = _thisTransform.position;
+		_distance += pos.x;
+		float curX = Mathf.Floor(_thisTransform.position.x);
+		pos.x = 0;
+		transform.position = pos;
+		//Particles
+		//Burst
+		int l = impactBurstParticles.GetParticles(_particleBuffer);
+		ShiftParticles(curX, l);
+		impactBurstParticles.SetParticles(_particleBuffer, l);
+		//Ground
+		l = groundParticles.GetParticles(_particleBuffer);
+		ShiftParticles(curX, l);
+		groundParticles.SetParticles(_particleBuffer, l);
+		//Damage
+		l = damgeParicles.GetParticles(_particleBuffer);
+		ShiftParticles(curX, l);
+		damgeParicles.SetParticles(_particleBuffer, l);
+		//Jump
+		l = jumpParticles.GetParticles(_particleBuffer);
+		ShiftParticles(curX, l);
+		jumpParticles.SetParticles(_particleBuffer, l);
+	}
+
+	void ShiftParticles(float curX, int l)
+	{
+		for (int i = 0; i < l; i++)
+		{
+			Vector3 newPos = _particleBuffer[i].position;
+			newPos.x = (newPos.x - curX);
+			_particleBuffer[i].position = newPos;
 		}
 	}
 }
