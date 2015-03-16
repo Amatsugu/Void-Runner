@@ -37,7 +37,7 @@ public class Cloud : MonoBehaviour {
 	{
 		_player = GameObject.FindWithTag("Player");
 		_speed = Random.Range(0.65f, 0.9f);
-		_thisRigidbody = rigidbody2D;
+		_thisRigidbody = GetComponent<Rigidbody2D>();
 	}
 
 	void OnEnable()
@@ -51,7 +51,7 @@ public class Cloud : MonoBehaviour {
 			return;
 		if(_player == null)
 			Start();
-		Vector2 vel = _player.rigidbody2D.velocity;
+		Vector2 vel = _player.GetComponent<Rigidbody2D>().velocity;
 		vel *= _speed;
 		//vel.y *= _speed;
 		//if(_thisTransform.position.y <= yMin)

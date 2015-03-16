@@ -12,12 +12,12 @@ public class Rigidbody2DPause : MonoBehaviour {
 
 	void Start()
 	{
-		if(rigidbody2D == null)
+		if(GetComponent<Rigidbody2D>() == null)
 		{
 			enabled = false;
 			return;
 		}
-		_thisRigidbody = rigidbody2D;
+		_thisRigidbody = GetComponent<Rigidbody2D>();
 	}
 
 	public void Pause()

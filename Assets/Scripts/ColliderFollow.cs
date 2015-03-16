@@ -11,9 +11,9 @@ public class ColliderFollow : MonoBehaviour {
 			return;
 
 		BoxCollider2D col = GetComponent<BoxCollider2D>();
-		Vector2 cen = col.center;
+		Vector2 cen = col.offset;
 		cen.x = objectToFollow.position.x;
-		col.center = cen;
+		col.offset = cen;
 	}
 	
 }

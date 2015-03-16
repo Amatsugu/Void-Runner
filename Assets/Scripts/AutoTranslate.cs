@@ -9,7 +9,7 @@ public class AutoTranslate : MonoBehaviour {
 	void Start()
 	{
 		if(useRigidbody)
-			rigidbody2D.velocity = moveVector;
+			GetComponent<Rigidbody2D>().velocity = moveVector;
 	}
 
 	void Update () 

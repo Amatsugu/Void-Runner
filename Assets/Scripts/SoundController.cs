@@ -15,7 +15,7 @@ public class SoundController : MonoBehaviour {
 	// Use this for initialization
 	void Awake () 
 	{
-		_as = audio;
+		_as = GetComponent<AudioSource>();
 		Init();
 		_as.clip = soundClip;
 		_as.playOnAwake = autoPlay;

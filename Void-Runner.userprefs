@@ -2,9 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player.cs">
     <Files>
-      <File FileName="Assets\Scripts\Particle.cs" Line="46" Column="4" />
-      <File FileName="Assets\Scripts\Player.cs" Line="93" Column="77" />
-      <File FileName="Assets\Scripts\LevelGenerator.cs" Line="51" Column="60" />
+      <File FileName="Assets\Scripts\Player.cs" Line="39" Column="38" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

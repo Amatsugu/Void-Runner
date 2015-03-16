@@ -27,7 +27,7 @@ public class LevelGenerator : MonoBehaviour {
 	private List<GameObject> _spawnedObjects = new List<GameObject>();
 	private List<GameObject> _spawnedGround = new List<GameObject>();
 	private List<GameObject> _staticObsticles = new List<GameObject>();
-	private Player _player;
+	//private Player _player;
 	private Transform _thisTransform;
 	private bool _isPaused;
 	private float _prePausedTime;
@@ -52,7 +52,7 @@ public class LevelGenerator : MonoBehaviour {
 		_grassObjectPool = GameObject.Find("_GrassObjects").GetComponent<ObjectPoolerWorld>();
 		_cloudObjectPool = GameObject.Find("_CloudObjects").GetComponent<ObjectPoolerWorld>();
 		_spikeObjectPool = GameObject.Find("_SpikeObjects").GetComponent<ObjectPoolerWorld>();
-		_player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+		//_player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 		_curPos = startPos;
 	}
 
@@ -78,7 +78,7 @@ public class LevelGenerator : MonoBehaviour {
 		}
 		GenerateGround();
 		GenerateSpikes();
-		GenerateClouds();
+		//GenerateClouds();
 		CleanUpObjects();
 		CleanUpGround();
 		CleanUpStaticObstacles();
@@ -216,7 +216,7 @@ public class LevelGenerator : MonoBehaviour {
 				}
 			}
 			_curPos = startPos;
-			_player.Loop();
+			//_player.Loop();
 		}
 	}
 
