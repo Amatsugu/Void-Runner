@@ -25,13 +25,11 @@ public class LevelGenerator : MonoBehaviour {
 	private Player _player;
 	private Transform _thisTransform;
 	private bool _isPaused;
-	private float _prePausedTime;
 	private ParticleSystem.Particle[] _couldParticles;
 
 	public void Pause()
 	{
 		_isPaused = true;
-		_prePausedTime = Time.time;
 	}
 
 	public void UnPause()

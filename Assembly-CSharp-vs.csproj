@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AutoTranslate.cs" />
+     <Compile Include="Assets\Scripts\BulkPauseParticles.cs" />
      <Compile Include="Assets\Scripts\Cloud.cs" />
      <Compile Include="Assets\Scripts\ColliderFollow.cs" />
      <Compile Include="Assets\Scripts\FPSCounter.cs" />

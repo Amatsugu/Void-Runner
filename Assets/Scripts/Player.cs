@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
 
+	public bool isActive = true;
 	public Animator anim;
 	public float startSpeed = 1;
 	public float accel = 100;
@@ -52,6 +53,7 @@ public class Player : MonoBehaviour {
 		damgeParicles.Pause();
 		impactBurstParticles.Pause();
 		groundParticles.Pause();
+		jumpParticles.Pause();
 		anim.speed = 0;
 	}
 
@@ -65,6 +67,7 @@ public class Player : MonoBehaviour {
 		damgeParicles.Play();
 		impactBurstParticles.Play();
 		groundParticles.Play();
+		jumpParticles.Play();
 		anim.speed = _curSpeed/startSpeed;
 	}
 
@@ -73,14 +76,19 @@ public class Player : MonoBehaviour {
 	{
 		if(_isPaused)
 			return;
+		if (isActive)
+			ReadInputs();
+	}
+	//Called after update
+	void LateUpdate()
+	{
+		if (_isPaused)
+			return;
 		_thisRigidbody.velocity = new Vector2(_curSpeed, _thisRigidbody.velocity.y);
-
-
-		ReadInputs();
-		UpdateHUD();
+		if (isActive)
+			UpdateHUD();
 		UpdateAnimations();
 		_curSpeed += accel * Time.deltaTime;
-		distanceDisplay.text = VoidUtils.Round(_thisTransform.position.x + _distance, 100) + "m";
 	}
 
 	//Process animations
@@ -101,13 +109,12 @@ public class Player : MonoBehaviour {
 		if(Application.isMobilePlatform)
 		{
 			Touch t = Input.GetTouch(0);
-			if(t.phase == TouchPhase.Began && t.deltaPosition.y >= 0)
-			{
-				Jump();
-			}
 			if(t.phase == TouchPhase.Moved && t.deltaPosition.y < -5)
 			{
 				Stomp();
+			}else if(t.phase == TouchPhase.Began && t.deltaPosition.y >= 0)
+			{
+				Jump();
 			}
 		}else
 		{ 
@@ -127,6 +134,8 @@ public class Player : MonoBehaviour {
 	{
 		Vector3 scale = healthBar.localScale;
 		healthBar.localScale = new Vector3(Mathf.Lerp(scale.x, Screen.width * (_curHealth / 100), Time.deltaTime * 5f), scale.y, scale.z);
+		distanceDisplay.text = VoidUtils.Round(_thisTransform.position.x + _distance, 100) + "m";
+
 	}
 
 
