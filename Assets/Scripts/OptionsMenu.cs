@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets.ImageEffects;
 using System.Collections;
 
 public class OptionsMenu : MonoBehaviour {
@@ -12,12 +13,14 @@ public class OptionsMenu : MonoBehaviour {
 	public Slider masterVol;
 	public Slider effectVol;
 	public Toggle VSync;
+	public Toggle Bloom;
 	public bool _isOptions;
 
 	private float _masterVol;
 	private float _musicVol;
 	private float _effectVol;
 	private int _VSync;
+	private int _Bloom;
 
 	public void LoadPrefs()
 	{
@@ -28,10 +31,9 @@ public class OptionsMenu : MonoBehaviour {
 		musicVol.value = _musicVol = PlayerPrefs.GetFloat("MusicVol", 100);
 		musicVolNum.text = _effectVol.ToString();
 		_VSync = PlayerPrefs.GetInt("VSync", 1);
-		if(_VSync > 0)
-			VSync.isOn = true;
-		else
-			VSync.isOn = false;
+		_Bloom = PlayerPrefs.GetInt("Bloom", 1);
+		VSync.isOn = VoidUtils.IntBool(_VSync);
+		Bloom.isOn = VoidUtils.IntBool(_Bloom);
 		ApplyOptions();
 	}
 
@@ -56,21 +58,24 @@ public class OptionsMenu : MonoBehaviour {
 
 	void ApplyOptions()
 	{
-		GameRegistry.EFFECT_VOL = _effectVol/100;
-		GameRegistry.MUSIC_VOL = _musicVol/100;
-		
+		//Volumes
+		GameRegistry.EFFECT_VOL = (_effectVol/100);
+		GameRegistry.MUSIC_VOL = (_musicVol/100);
 		SoundController[] audio = GameObject.FindObjectsOfType<SoundController>() as SoundController[];
 		foreach(SoundController s in audio)
 		{
 			s.UpdateVolumes();
 		}
-		
+		//Bloom
+		Camera.main.GetComponent<BloomOptimized>().enabled = VoidUtils.IntBool(_Bloom);
+		//VSync
 		QualitySettings.vSyncCount = _VSync;
-		
+		//Save Settings
 		PlayerPrefs.SetFloat("MasterVol", _masterVol);
 		PlayerPrefs.SetFloat("EffectVol", _effectVol);
 		PlayerPrefs.SetFloat("MusicVol", _musicVol);
 		PlayerPrefs.SetInt("VSync", _VSync);
+		PlayerPrefs.SetInt("Bloom", _Bloom);
 
 	}
 
@@ -95,9 +100,11 @@ public class OptionsMenu : MonoBehaviour {
 	
 	public void SetVSync(bool sync)
 	{
-		if(sync)
-			_VSync = 1;
-		else
-			_VSync = 0;
+		_VSync = VoidUtils.BoolInt(sync);
+	}
+
+	public void SetBloom(bool bloom)
+	{
+		_Bloom = VoidUtils.BoolInt(bloom);
 	}
 }
