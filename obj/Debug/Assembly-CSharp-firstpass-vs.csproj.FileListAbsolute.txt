@@ -11,5 +11,3 @@ C:\Users\Khamraj\Documents\GitHub\Void-Runner\Temp\bin\Debug\Unity.CecilTools.dl
 C:\Users\Khamraj\Documents\GitHub\Void-Runner\obj\Debug\Assembly-CSharp-firstpass-vs.csprojResolveAssemblyReference.cache
 C:\Users\Khamraj\Documents\GitHub\Void-Runner\obj\Debug\Assembly-CSharp-firstpass.dll
 C:\Users\Khamraj\Documents\GitHub\Void-Runner\obj\Debug\Assembly-CSharp-firstpass.pdb
-C:\Users\Khamraj\Documents\GitHub\Void-Runner\Temp\bin\Debug\Assembly-CSharp-firstpass.dll.CodeAnalysisLog.xml
-C:\Users\Khamraj\Documents\GitHub\Void-Runner\Temp\bin\Debug\Assembly-CSharp-firstpass.dll.lastcodeanalysissucceeded

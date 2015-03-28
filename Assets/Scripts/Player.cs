@@ -1,5 +1,8 @@
+#define DEBUG
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,6 +20,7 @@ public class Player : MonoBehaviour {
 	public ParticleSystem groundParticles;
 	public ParticleSystem jumpParticles;
 	public Text distanceDisplay;
+	public float flickSensitvity = 0.25f;
 
 	private float _distance;
 	private float _curSpeed;
@@ -77,7 +81,11 @@ public class Player : MonoBehaviour {
 		if(_isPaused)
 			return;
 		if (isActive)
-			ReadInputs();
+		{
+			ReadKeyInputs();
+			ReadTouchInputs();
+		}
+			
 	}
 	//Called after update
 	void LateUpdate()
@@ -104,31 +112,35 @@ public class Player : MonoBehaviour {
 	}
 
 	//Read player inputs
-	void ReadInputs()
-	{
-		if(Application.isMobilePlatform)
+	[Conditional("UNITY_STANDALONE"), Conditional("UNITY_EDITOR")]
+	void ReadKeyInputs()
+	{	
+		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			Touch t = Input.GetTouch(0);
-			if(t.phase == TouchPhase.Moved && t.deltaPosition.y < -5)
-			{
-				Stomp();
-			}else if(t.phase == TouchPhase.Began && t.deltaPosition.y >= 0)
-			{
-				Jump();
-			}
-		}else
-		{ 
-			if (Input.GetKeyDown(KeyCode.Space))
-			{
-				Jump();
-			}
-			if (Input.GetKeyDown(KeyCode.S))
-			{
-				Stomp();
-			}
+			Jump();
+		}
+		if (Input.GetKeyDown(KeyCode.S))
+		{
+			Stomp();
 		}
 	}
 
+	[Conditional("UNITY_ANDROID"), Conditional("IOS")]
+	public void ReadTouchInputs()
+	{
+		Touch t = Input.GetTouch(0);
+		if (t.phase == TouchPhase.Moved)
+		{
+			if (t.deltaPosition.y < flickSensitvity * Screen.height)
+			{
+				Stomp();
+			}
+			else if (t.deltaPosition.y >= flickSensitvity * Screen.height)
+			{
+				Jump();
+			}
+		}
+	}
 	//Change values displayed on the HUD
 	void UpdateHUD()
 	{
@@ -268,9 +280,11 @@ public class Player : MonoBehaviour {
 	{
 		for (int i = 0; i < l; i++)
 		{
+			//Vector3 vel = _particleBuffer[i].velocity;
 			Vector3 newPos = _particleBuffer[i].position;
 			newPos.x = (newPos.x - curX);
 			_particleBuffer[i].position = newPos;
+			//_particleBuffer[i].velocity = vel;
 		}
 	}
 }
