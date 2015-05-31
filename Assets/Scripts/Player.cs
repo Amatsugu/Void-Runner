@@ -128,6 +128,8 @@ public class Player : MonoBehaviour {
 	[Conditional("UNITY_ANDROID"), Conditional("IOS")]
 	public void ReadTouchInputs()
 	{
+		if (Application.isEditor)
+			return;
 		Touch t = Input.GetTouch(0);
 		if (t.phase == TouchPhase.Moved)
 		{

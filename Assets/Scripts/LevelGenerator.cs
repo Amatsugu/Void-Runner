@@ -162,7 +162,8 @@ public class LevelGenerator : MonoBehaviour {
 		if(Mathf.Floor(_thisTransform.position.x) >= loopLimit)
 		{
 			float curX = Mathf.Floor(_thisTransform.position.x);
-			//Camera Move
+			
+			//Move Camera
 			Transform cTrans = Camera.main.transform;
 			Vector3 cPos = cTrans.position;
 			cPos.x = (cPos.x - curX);
@@ -175,6 +176,7 @@ public class LevelGenerator : MonoBehaviour {
 				newPos.x = (newPos.x - curX);
 				g.transform.position = newPos;
 			}
+
 			//Move ground
 			foreach(GameObject g in _spawnedGround)
 			{
@@ -184,7 +186,7 @@ public class LevelGenerator : MonoBehaviour {
 				g.transform.position = newPos;
 			}
 
-			//Partilce Move
+			//Move Partilces
 			int l = cloudSystem.GetParticles(_couldParticles);
 			for (int i = 0; i < l; i++)
 			{
@@ -192,6 +194,7 @@ public class LevelGenerator : MonoBehaviour {
 				newPos.x = (newPos.x - curX);
 				_couldParticles[i].position = newPos;
 			}
+
 			cloudSystem.SetParticles(_couldParticles, l);
 			//Update info
 			_curGenerationPos = startOffset;

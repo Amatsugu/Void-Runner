@@ -41,6 +41,7 @@ public class OptionsMenu : MonoBehaviour {
 	{
 		_isOptions = !_isOptions;
 		optionsMenu.SetActive(_isOptions);
+		//gameObject.SendMessage("ToggleDim");
 	}
 
 	public void OptionsCancel()
